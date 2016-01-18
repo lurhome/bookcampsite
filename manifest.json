@@ -1,0 +1,35 @@
+{
+    "name": "Automatic Book Camping Sites",
+    "description": "Reserve Camping sites at specific time",
+    "version": "0.3",
+    "permissions": ["contextMenus",
+		    "tabs"
+		   ],
+    "background": {
+	"scripts": ["js/background.js"]
+    },
+
+    "content_scripts": [
+	{
+	    "matches": ["http://www.recreation.gov/*",
+			"https://www.recreation.gov/*"],
+	    "js": ["js/recreation_maximum_err_msg.js"],
+	    "run_at": "document_start"
+	},
+	{
+	    "matches": ["http://www.reserveamerica.com/*",
+			"https://www.reserveamerica.com/*"],
+	    "js": ["js/reserveAmerica_maximum_err_msg.js"],
+	    "run_at": "document_start"
+	},
+	{
+	    "matches": ["http://www.recreation.gov/*",
+			"https://www.recreation.gov/*",
+			"http://www.reserveamerica.com/*",
+			"https://www.reserveamerica.com/*"],
+	    "js": ["js/recreation_content.js"],
+	    "run_at": "document_end"
+	}
+    ],
+    "manifest_version": 2
+}
