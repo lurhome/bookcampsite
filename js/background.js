@@ -3,14 +3,14 @@ var reloadUrl = "";
 var nextAction = "done";
 var siteRemain = 0, retryRemain = 30;
 var contextMenuItem = {id: 0, isCreated: false};
-var DEBUG_MODE = true;
+var DEBUG_MODE = false;
 
 function reset(){
     rootTab = {};
     reloadUrl = "";
     nextAction = "done";
     siteRemain = 0;
-    retryRemain = 30;
+    retryRemain = 3;
 }
 
 function DEBUG_TRACE(str) {
@@ -69,6 +69,10 @@ function messageHandler (request, sender, sendResponse) {
 	    reset();
 	    sendResponse({action: "done"}); 
 	}
+	break;
+    case "refresh":
+	nextAction = "reload";
+	sendResponse({action: "reload", url:reloadUrl});
 	break;
     default:
 	break;

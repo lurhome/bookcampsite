@@ -1,4 +1,4 @@
-var DEBUG_MODE = true;
+var DEBUG_MODE = false;
 
 function DEBUG_TRACE(str) {
     if (DEBUG_MODE)
@@ -65,7 +65,22 @@ function checkBookStatus(){
     else
     {
 	// failed at last step
-	chrome.runtime.sendMessage({command: "failed"}, checkReload);
+	var errMsgTable = document.getElementById("errorMessages");
+	if (errMsgTable) {
+	    var msg = errMsgTable.innerHTML.toString();
+	    if (msg.search(maximumErrMsg) != -1) {
+		// maximum booking reached
+		var ret = {command: "setNextAction", action: "done", reason: "maximum booking number reached"};
+		chrome.runtime.sendMessage(ret);
+	    }
+	    else if (msg.search(outOfInventoryErrMsg) != -1) {
+		var ret = {command: "refresh", reason: "Inventory not available"};
+		chrome.runtime.sendMessage(ret, checkReload);
+	    }
+	}
+	else {
+	    chrome.runtime.sendMessage({command: "failed", reason: "unknown"}, checkReload);
+	}
     }
 }
 
@@ -89,7 +104,7 @@ function checkMaximumReached(){
 
 function jobRequestHandler(response){
     DEBUG_TRACE("content script got response: " + JSON.stringify(response));
-    if (response && response.command != "done" && checkSignedIn() && !checkMaximumReached()) {
+    if (response && response.command != "done" ) {
 	switch (response.command){
 	case "submitSearchRequest":
 	    submitSearchRequest();
